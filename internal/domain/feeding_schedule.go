@@ -9,12 +9,12 @@ import (
 type FeedingSchedule struct {
 	id          uuid.UUID
 	AnimalId    uuid.UUID
-	FoodType    FoodType
+	FoodType    string
 	ScheduledAt time.Time
 	Occurred    bool
 }
 
-func NewFeedingSchedule(animalId uuid.UUID, foodType FoodType, scheduledAt time.Time) FeedingSchedule {
+func NewFeedingSchedule(animalId uuid.UUID, foodType string, scheduledAt time.Time) FeedingSchedule {
 	return FeedingSchedule{
 		id:          uuid.New(),
 		AnimalId:    animalId,

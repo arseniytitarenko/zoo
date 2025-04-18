@@ -1,11 +1,11 @@
-package repository
+package out
 
 import (
 	"github.com/google/uuid"
 	"zoo/internal/domain"
 )
 
-type IEnclosureRepository interface {
+type EnclosureRepository interface {
 	Save(animal *domain.Enclosure)
 	Delete(id uuid.UUID)
 	GetByID(id uuid.UUID) (*domain.Enclosure, bool)

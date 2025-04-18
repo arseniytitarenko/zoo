@@ -1,11 +1,11 @@
-package repository
+package out
 
 import (
 	"github.com/google/uuid"
 	"zoo/internal/domain"
 )
 
-type IFeedingScheduleRepository interface {
+type FeedingScheduleRepository interface {
 	Save(animal *domain.FeedingSchedule)
 	Delete(id uuid.UUID)
 	GetByID(id uuid.UUID) (*domain.FeedingSchedule, bool)

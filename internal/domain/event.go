@@ -27,7 +27,7 @@ func (e AnimalMovedEvent) OccurredAtTime() time.Time {
 
 type FeedingTimeEvent struct {
 	AnimalID    uuid.UUID
-	FoodType    FoodType
+	FoodType    string
 	ScheduledAt time.Time
 	OccurredAt  time.Time
 }

@@ -6,20 +6,20 @@ import (
 )
 
 type Animal struct {
-	id           uuid.UUID
-	enclosureId  uuid.UUID
+	Id           uuid.UUID
+	EnclosureId  uuid.UUID
 	Species      string
 	Name         string
-	DateOfBirth  time.Time
+	BirthDate    time.Time
 	Gender       Gender
-	FavoriteFood FoodType
-	Status       HealthStatus
+	FavoriteFood string
+	HealthStatus HealthStatus
 	events       []Event
 }
 
 func (a *Animal) Feed(scheduledAt time.Time) {
 	a.events = append(a.events, FeedingTimeEvent{
-		AnimalID:    a.id,
+		AnimalID:    a.Id,
 		FoodType:    a.FavoriteFood,
 		ScheduledAt: scheduledAt,
 		OccurredAt:  time.Now(),
@@ -27,15 +27,15 @@ func (a *Animal) Feed(scheduledAt time.Time) {
 }
 
 func (a *Animal) Treat() {
-	a.Status = Healthy
+	a.HealthStatus = Healthy
 }
 
 func (a *Animal) MoveTo(newEnclosureId uuid.UUID) {
-	old := a.enclosureId
-	a.enclosureId = newEnclosureId
+	old := a.EnclosureId
+	a.EnclosureId = newEnclosureId
 
 	a.events = append(a.events, AnimalMovedEvent{
-		AnimalID:        a.id,
+		AnimalID:        a.Id,
 		FromEnclosureID: old,
 		ToEnclosureID:   newEnclosureId,
 		OccurredAt:      time.Now(),
@@ -46,14 +46,6 @@ func (a *Animal) PullEvents() []Event {
 	evs := a.events
 	a.events = nil
 	return evs
-}
-
-func (a *Animal) ID() uuid.UUID {
-	return a.id
-}
-
-func (a *Animal) EnclosureID() uuid.UUID {
-	return a.enclosureId
 }
 
 type Gender string
@@ -69,5 +61,3 @@ const (
 	Healthy HealthStatus = "Healthy"
 	Sick    HealthStatus = "Sick"
 )
-
-type FoodType string
