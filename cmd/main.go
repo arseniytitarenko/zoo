@@ -10,6 +10,7 @@ import (
 
 func main() {
 	animalRepo := repository.NewInMemoryAnimalRepo()
+	enclosureRepo := repository.NewInMemoryEnclosureRepo()
 	animalService := service.NewAnimalService(animalRepo)
 	animalHandler := handler.NewAnimalHandler(animalService)
 

@@ -6,15 +6,11 @@ import (
 )
 
 type Enclosure struct {
-	id              uuid.UUID
+	ID              uuid.UUID
 	Type            EnclosureType
-	Size            Size
+	Size            *Size
 	CurrAnimalCount uint8
 	AnimalCapacity  uint8
-}
-
-func (e *Enclosure) ID() uuid.UUID {
-	return e.id
 }
 
 func (e *Enclosure) Clean() {}
@@ -57,4 +53,14 @@ func NewSize(length, width, height float64) *Size {
 		width:  width,
 		height: height,
 	}
+}
+
+func (s *Size) Length() float64 {
+	return s.length
+}
+func (s *Size) Width() float64 {
+	return s.width
+}
+func (s *Size) Height() float64 {
+	return s.height
 }
