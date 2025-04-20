@@ -30,7 +30,7 @@ func (s *AnimalTransportService) TransportAnimal(animalId, toEnclosureId string)
 		panic("enclosure remove failed: " + err.Error())
 	}
 	_ = toEnclosure.AddAnimal()
-	animal.MoveTo(toEnclosure.ID)
+	animal.MoveTo(toEnclosure.ID())
 
 	events := animal.PullEvents()
 	for _, event := range events {
@@ -57,7 +57,7 @@ func (s *AnimalTransportService) GetAnimalAndEnclosures(animalId string, toEnclo
 	if !ok {
 		return nil, nil, nil, errs.ErrEnclosureNotFound
 	}
-	fromEnclosure, ok := s.enclosureRepo.GetByID(animal.EnclosureId)
+	fromEnclosure, ok := s.enclosureRepo.GetByID(animal.EnclosureID())
 	if !ok {
 		panic("failed to find animal enclosure")
 	}

@@ -54,16 +54,15 @@ func (s *AnimalService) NewAnimal(req *dto.NewAnimalRequest) (*dto.AnimalRespons
 		return nil, errs.ErrEnclosureIsFull
 	}
 	_ = enclosure.AddAnimal()
-	animal := &domain.Animal{
-		Id:           uuid.New(),
-		EnclosureId:  req.EnclosureId,
-		Name:         req.Name,
-		Gender:       req.Gender,
-		Species:      req.Species,
-		FavoriteFood: req.FavoriteFood,
-		HealthStatus: req.HealthStatus,
-		BirthDate:    animalBirthDate,
-	}
+	animal := domain.NewAnimal(
+		req.Species,
+		req.Name,
+		animalBirthDate,
+		req.Gender,
+		req.FavoriteFood,
+		req.HealthStatus,
+		enclosure.ID(),
+	)
 	s.animalRepo.Save(animal)
 	return newAnimalResponse(animal), nil
 }
@@ -77,7 +76,7 @@ func (s *AnimalService) DeleteAnimal(id string) error {
 	if !ok {
 		return errs.ErrAnimalNotFound
 	}
-	s.animalRepo.Delete(animal.Id)
+	s.animalRepo.Delete(animal.ID())
 	return nil
 }
 
@@ -91,13 +90,13 @@ func newAnimalResponses(animals []domain.Animal) []dto.AnimalResponse {
 
 func newAnimalResponse(animal *domain.Animal) *dto.AnimalResponse {
 	return &dto.AnimalResponse{
-		ID:           animal.Id,
-		EnclosureID:  animal.EnclosureId,
-		Species:      animal.Species,
-		Name:         animal.Name,
-		BirthDate:    animal.BirthDate.Format("02.01.2006"),
-		Gender:       animal.Gender,
-		FavoriteFood: animal.FavoriteFood,
-		HealthStatus: animal.HealthStatus,
+		ID:           animal.ID(),
+		EnclosureID:  animal.EnclosureID(),
+		Species:      animal.Species(),
+		Name:         animal.Name(),
+		BirthDate:    animal.BirthDate().Format("02.01.2006"),
+		Gender:       animal.Gender(),
+		FavoriteFood: animal.FavoriteFood(),
+		HealthStatus: animal.HealthStatus(),
 	}
 }

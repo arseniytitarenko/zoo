@@ -6,34 +6,49 @@ import (
 )
 
 type Enclosure struct {
-	ID              uuid.UUID
-	Type            EnclosureType
-	Size            *Size
-	CurrAnimalCount uint8
-	AnimalCapacity  uint8
+	id              uuid.UUID
+	enclosureType   EnclosureType
+	size            *Size
+	currAnimalCount uint8
+	animalCapacity  uint8
+}
+
+func NewEnclosure(enclosureType EnclosureType, size *Size, capacity uint8) *Enclosure {
+	return &Enclosure{
+		id:             uuid.New(),
+		enclosureType:  enclosureType,
+		size:           size,
+		animalCapacity: capacity,
+	}
 }
 
 func (e *Enclosure) Clean() {}
 
 func (e *Enclosure) AddAnimal() error {
-	if e.CurrAnimalCount == e.AnimalCapacity {
+	if e.currAnimalCount == e.animalCapacity {
 		return errors.New("enclosure is full")
 	}
-	e.CurrAnimalCount++
+	e.currAnimalCount++
 	return nil
 }
 
 func (e *Enclosure) RemoveAnimal() error {
-	if e.CurrAnimalCount == 0 {
+	if e.currAnimalCount == 0 {
 		return errors.New("enclosure is empty")
 	}
-	e.CurrAnimalCount--
+	e.currAnimalCount--
 	return nil
 }
 
 func (e *Enclosure) IsFull() bool {
-	return e.CurrAnimalCount == e.AnimalCapacity
+	return e.currAnimalCount == e.animalCapacity
 }
+
+func (e *Enclosure) ID() uuid.UUID          { return e.id }
+func (e *Enclosure) Type() EnclosureType    { return e.enclosureType }
+func (e *Enclosure) Size() *Size            { return e.size }
+func (e *Enclosure) CurrAnimalCount() uint8 { return e.currAnimalCount }
+func (e *Enclosure) AnimalCapacity() uint8  { return e.animalCapacity }
 
 type EnclosureType string
 
@@ -44,6 +59,8 @@ const (
 	ForBirds      EnclosureType = "For birds"
 	Other         EnclosureType = "Other"
 )
+
+// --- Size ---
 
 type Size struct {
 	length float64
@@ -59,12 +76,6 @@ func NewSize(length, width, height float64) *Size {
 	}
 }
 
-func (s *Size) Length() float64 {
-	return s.length
-}
-func (s *Size) Width() float64 {
-	return s.width
-}
-func (s *Size) Height() float64 {
-	return s.height
-}
+func (s *Size) Length() float64 { return s.length }
+func (s *Size) Width() float64  { return s.width }
+func (s *Size) Height() float64 { return s.height }

@@ -39,13 +39,8 @@ func (s *EnclosureService) NewEnclosure(req *dto.NewEnclosureRequest) (*dto.Encl
 		req.Type = domain.Other
 	}
 
-	enclosure := &domain.Enclosure{
-		ID:              uuid.New(),
-		Type:            req.Type,
-		Size:            domain.NewSize(req.Length, req.Width, req.Height),
-		CurrAnimalCount: req.CurrAnimalCount,
-		AnimalCapacity:  req.AnimalCapacity,
-	}
+	enclosure := domain.NewEnclosure(req.Type, domain.NewSize(req.Length, req.Width, req.Height), req.AnimalCapacity)
+
 	s.enclosureRepo.Save(enclosure)
 	return newEnclosureResponse(enclosure), nil
 }
@@ -59,7 +54,7 @@ func (s *EnclosureService) DeleteEnclosure(id string) error {
 	if !ok {
 		return errs.ErrEnclosureNotFound
 	}
-	s.enclosureRepo.Delete(enclosure.ID)
+	s.enclosureRepo.Delete(enclosure.ID())
 	return nil
 }
 
@@ -73,12 +68,12 @@ func newEnclosureResponses(enclosures []domain.Enclosure) []dto.EnclosureRespons
 
 func newEnclosureResponse(enclosure *domain.Enclosure) *dto.EnclosureResponse {
 	return &dto.EnclosureResponse{
-		ID:              enclosure.ID,
-		Length:          enclosure.Size.Length(),
-		Width:           enclosure.Size.Width(),
-		Height:          enclosure.Size.Height(),
-		Type:            enclosure.Type,
-		CurrAnimalCount: enclosure.CurrAnimalCount,
-		AnimalCapacity:  enclosure.AnimalCapacity,
+		ID:              enclosure.ID(),
+		Length:          enclosure.Size().Length(),
+		Width:           enclosure.Size().Width(),
+		Height:          enclosure.Size().Height(),
+		Type:            enclosure.Type(),
+		CurrAnimalCount: enclosure.CurrAnimalCount(),
+		AnimalCapacity:  enclosure.AnimalCapacity(),
 	}
 }

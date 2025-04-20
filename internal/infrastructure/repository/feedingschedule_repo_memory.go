@@ -45,3 +45,15 @@ func (r *InMemoryFeedingScheduleRepo) GetByID(id uuid.UUID) (*domain.FeedingSche
 	feedingSchedule, exists := r.data[id]
 	return feedingSchedule, exists
 }
+
+func (r *InMemoryFeedingScheduleRepo) GetAllByAnimalID(animalID uuid.UUID) []domain.FeedingSchedule {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	var feedingSchedules []domain.FeedingSchedule
+	for _, fs := range r.data {
+		if fs.AnimalID() == animalID {
+			feedingSchedules = append(feedingSchedules, *fs)
+		}
+	}
+	return feedingSchedules
+}
