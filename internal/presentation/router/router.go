@@ -5,16 +5,17 @@ import (
 	"zoo/internal/presentation/handler"
 )
 
-func SetupRouter(animalHandler *handler.AnimalHandler, enclosureHandler *handler.EnclosureHandler) *gin.Engine {
+func SetupRouter(animalHandler *handler.AnimalHandler, enclosureHandler *handler.EnclosureHandler, feedingHandler *handler.FeedingHandler) *gin.Engine {
 	r := gin.Default()
 
 	animalGroup := r.Group("/animals")
 	{
 		animalGroup.GET("", animalHandler.GetAllAnimals)
-		animalGroup.GET("/:id", animalHandler.GetAnimalByID)
 		animalGroup.POST("", animalHandler.NewAnimal)
+		animalGroup.GET("/:id", animalHandler.GetAnimalByID)
 		animalGroup.DELETE("/:id", animalHandler.DeleteAnimal)
 		animalGroup.POST("/:id/transport", animalHandler.TransportAnimal)
+		animalGroup.GET("/:id/schedules", feedingHandler.GetAnimalSchedules)
 	}
 
 	enclosureGroup := r.Group("/enclosures")
@@ -25,5 +26,11 @@ func SetupRouter(animalHandler *handler.AnimalHandler, enclosureHandler *handler
 		enclosureGroup.DELETE("/:id", enclosureHandler.DeleteEnclosure)
 	}
 
+	scheduleGroup := r.Group("/schedules")
+	{
+		scheduleGroup.GET("", feedingHandler.GetAllSchedules)
+		scheduleGroup.POST("", feedingHandler.NewSchedule)
+		scheduleGroup.POST("/:id/feed", feedingHandler.FeedByScheduleId)
+	}
 	return r
 }

@@ -51,34 +51,34 @@ func (s *FeedingOrganizationService) NewFeedingSchedule(req *dto.NewFeedingSched
 	return newFeedingScheduleResponse(fs), nil
 }
 
-func (s *FeedingOrganizationService) FeedByScheduleId(scheduleId string) error {
+func (s *FeedingOrganizationService) FeedByScheduleId(scheduleId string) (*dto.FeedingScheduleResponse, error) {
 	scheduleUUID, err := uuid.Parse(scheduleId)
 	if err != nil {
-		return errs.ErrInvalidID
+		return nil, errs.ErrInvalidID
 	}
 	schedule, ok := s.feedingScheduleRepo.GetByID(scheduleUUID)
 	if !ok {
-		return errs.ErrScheduleNotFound
+		return nil, errs.ErrScheduleNotFound
 	}
 	animal, ok := s.animalRepo.GetByID(schedule.AnimalID())
 	if !ok {
-		return errs.ErrAnimalNotFound
+		return nil, errs.ErrAnimalNotFound
 	}
 	if schedule.IsOccurred() {
-		return errs.ErrFeedingAlreadyOccurred
+		return nil, errs.ErrFeedingAlreadyOccurred
 	}
 
 	occurredAt := animal.Feed(schedule.ScheduledAt())
 	err = schedule.MarkAsOccurred(occurredAt)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	events := animal.PullEvents()
 	for _, event := range events {
 		s.eventDispatcher.Dispatch(event)
 	}
-	return nil
+	return newFeedingScheduleResponse(schedule), nil
 }
 
 func newFeedingScheduleResponses(schedules []domain.FeedingSchedule) []dto.FeedingScheduleResponse {

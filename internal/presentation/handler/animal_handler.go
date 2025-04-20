@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"zoo/internal/application/dto"
 	"zoo/internal/application/errs"
 	"zoo/internal/application/port/in"
+	"zoo/internal/presentation/response"
 )
 
 type AnimalHandler struct {
@@ -27,14 +28,8 @@ func (h *AnimalHandler) GetAnimalByID(c *gin.Context) {
 	id := c.Param("id")
 
 	animal, err := h.animalUseCase.GetAnimalByID(id)
-	if errors.Is(err, errs.ErrInvalidID) {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	} else if errors.Is(err, errs.ErrAnimalNotFound) {
-		c.JSON(http.StatusNotFound, err.Error())
-		return
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	if err != nil {
+		response.HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, animal)
@@ -43,20 +38,13 @@ func (h *AnimalHandler) GetAnimalByID(c *gin.Context) {
 func (h *AnimalHandler) NewAnimal(c *gin.Context) {
 	var req dto.NewAnimalRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.HandleError(c, fmt.Errorf("%w: %v", errs.ErrInvalidRequest, err))
 		return
 	}
 
 	animal, err := h.animalUseCase.NewAnimal(&req)
-	if errors.Is(err, errs.ErrInvalidDate) || errors.Is(err, errs.ErrInvalidGender) ||
-		errors.Is(err, errs.ErrInvalidStatus) || errors.Is(err, errs.ErrEnclosureNotFound) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	} else if errors.Is(err, errs.ErrEnclosureIsFull) {
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-		return
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	if err != nil {
+		response.HandleError(c, err)
 		return
 	}
 
@@ -67,14 +55,8 @@ func (h *AnimalHandler) DeleteAnimal(c *gin.Context) {
 	id := c.Param("id")
 
 	err := h.animalUseCase.DeleteAnimal(id)
-	if errors.Is(err, errs.ErrInvalidID) {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	} else if errors.Is(err, errs.ErrAnimalNotFound) {
-		c.JSON(http.StatusNotFound, err.Error())
-		return
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	if err != nil {
+		response.HandleError(c, err)
 		return
 	}
 
@@ -85,22 +67,13 @@ func (h *AnimalHandler) TransportAnimal(c *gin.Context) {
 	id := c.Param("id")
 	var req dto.TransportAnimalRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.HandleError(c, fmt.Errorf("%w: %v", errs.ErrInvalidRequest, err))
 		return
 	}
 
 	err := h.animalTransportUseCase.TransportAnimal(id, req.ToEnclosureID)
-	if errors.Is(err, errs.ErrEnclosureNotFound) || errors.Is(err, errs.ErrInvalidID) {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	} else if errors.Is(err, errs.ErrAnimalNotFound) {
-		c.JSON(http.StatusNotFound, err.Error())
-		return
-	} else if errors.Is(err, errs.ErrEnclosureIsFull) {
-		c.JSON(http.StatusConflict, err.Error())
-		return
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	if err != nil {
+		response.HandleError(c, err)
 		return
 	}
 

@@ -6,5 +6,5 @@ type FeedingOrganizationUseCase interface {
 	GetAllFeedingSchedules() []dto.FeedingScheduleResponse
 	GetAnimalFeedingSchedulesByID(animalId string) ([]dto.FeedingScheduleResponse, error)
 	NewFeedingSchedule(req *dto.NewFeedingScheduleRequest) (*dto.FeedingScheduleResponse, error)
-	FeedByScheduleId(scheduleId string) error
+	FeedByScheduleId(scheduleId string) (*dto.FeedingScheduleResponse, error)
 }

@@ -13,4 +13,5 @@ var (
 	ErrInvalidTime            = errors.New("invalid time")
 	ErrInvalidGender          = errors.New("invalid gender: gender should be one of: Male, Female")
 	ErrInvalidStatus          = errors.New("invalid health status: should be one of: Healthy, Sick")
+	ErrInvalidRequest         = errors.New("invalid request")
 )

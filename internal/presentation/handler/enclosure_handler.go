@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"zoo/internal/application/dto"
 	"zoo/internal/application/errs"
 	"zoo/internal/application/port/in"
+	"zoo/internal/presentation/response"
 )
 
 type EnclosureHandler struct {
@@ -26,14 +27,8 @@ func (h *EnclosureHandler) GetEnclosureByID(c *gin.Context) {
 	id := c.Param("id")
 
 	enclosure, err := h.enclosureUseCase.GetEnclosureByID(id)
-	if errors.Is(err, errs.ErrInvalidID) {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	} else if errors.Is(err, errs.ErrEnclosureNotFound) {
-		c.JSON(http.StatusNotFound, err.Error())
-		return
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	if err != nil {
+		response.HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, enclosure)
@@ -42,13 +37,13 @@ func (h *EnclosureHandler) GetEnclosureByID(c *gin.Context) {
 func (h *EnclosureHandler) NewEnclosure(c *gin.Context) {
 	var req dto.NewEnclosureRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.HandleError(c, fmt.Errorf("%w: %v", errs.ErrInvalidRequest, err))
 		return
 	}
 
 	enclosure, err := h.enclosureUseCase.NewEnclosure(&req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		response.HandleError(c, err)
 		return
 	}
 
@@ -59,14 +54,8 @@ func (h *EnclosureHandler) DeleteEnclosure(c *gin.Context) {
 	id := c.Param("id")
 
 	err := h.enclosureUseCase.DeleteEnclosure(id)
-	if errors.Is(err, errs.ErrInvalidID) {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	} else if errors.Is(err, errs.ErrEnclosureNotFound) {
-		c.JSON(http.StatusNotFound, err.Error())
-		return
-	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+	if err != nil {
+		response.HandleError(c, err)
 		return
 	}
 
