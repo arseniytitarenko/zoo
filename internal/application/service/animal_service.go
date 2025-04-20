@@ -46,9 +46,14 @@ func (s *AnimalService) NewAnimal(req *dto.NewAnimalRequest) (*dto.AnimalRespons
 	if req.HealthStatus != domain.Healthy && req.HealthStatus != domain.Sick {
 		return nil, errs.ErrInvalidStatus
 	}
-	if _, ok := s.enclosureRepo.GetByID(req.EnclosureId); !ok {
+	enclosure, ok := s.enclosureRepo.GetByID(req.EnclosureId)
+	if !ok {
 		return nil, errs.ErrEnclosureNotFound
 	}
+	if enclosure.IsFull() {
+		return nil, errs.ErrEnclosureIsFull
+	}
+	_ = enclosure.AddAnimal()
 	animal := &domain.Animal{
 		Id:           uuid.New(),
 		EnclosureId:  req.EnclosureId,

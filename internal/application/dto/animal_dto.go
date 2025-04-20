@@ -25,3 +25,7 @@ type NewAnimalRequest struct {
 	FavoriteFood string              `json:"favorite_food" binding:"required"`
 	HealthStatus domain.HealthStatus `json:"health_status" binding:"required"`
 }
+
+type TransportAnimalRequest struct {
+	ToEnclosureID string `json:"to_enclosure_id"`
+}

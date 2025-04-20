@@ -5,7 +5,7 @@ import "errors"
 var (
 	ErrAnimalNotFound    = errors.New("animal not found")
 	ErrEnclosureNotFound = errors.New("enclosure not found")
-	ErrInvalidAnimalData = errors.New("invalid animal data")
+	ErrEnclosureIsFull   = errors.New("impossible to place the animal, the cage is full")
 	ErrInvalidID         = errors.New("invalid id")
 	ErrInvalidDate       = errors.New("invalid date")
 	ErrInvalidGender     = errors.New("invalid gender: gender should be one of: Male, Female")

@@ -31,6 +31,10 @@ func (e *Enclosure) RemoveAnimal() error {
 	return nil
 }
 
+func (e *Enclosure) IsFull() bool {
+	return e.CurrAnimalCount == e.AnimalCapacity
+}
+
 type EnclosureType string
 
 const (

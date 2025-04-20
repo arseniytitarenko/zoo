@@ -14,6 +14,7 @@ func SetupRouter(animalHandler *handler.AnimalHandler, enclosureHandler *handler
 		animalGroup.GET("/:id", animalHandler.GetAnimalByID)
 		animalGroup.POST("", animalHandler.NewAnimal)
 		animalGroup.DELETE("/:id", animalHandler.DeleteAnimal)
+		animalGroup.POST("/:id/transport", animalHandler.TransportAnimal)
 	}
 
 	enclosureGroup := r.Group("/enclosures")

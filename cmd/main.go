@@ -3,18 +3,26 @@ package main
 import (
 	"log"
 	"zoo/internal/application/service"
+	"zoo/internal/infrastructure/dispatcher"
 	"zoo/internal/infrastructure/repository"
 	"zoo/internal/presentation/handler"
-	"zoo/internal/router"
+	"zoo/internal/presentation/router"
 )
 
 func main() {
 	animalRepo := repository.NewInMemoryAnimalRepo()
 	enclosureRepo := repository.NewInMemoryEnclosureRepo()
-	animalService := service.NewAnimalService(animalRepo)
-	animalHandler := handler.NewAnimalHandler(animalService)
+	eventDispatcher := dispatcher.NewEventDispatcher()
+	dispatcher.RegisterEventHandlers(eventDispatcher)
 
-	r := router.SetupRouter(animalHandler)
+	animalService := service.NewAnimalService(animalRepo)
+	enclosureService := service.NewEnclosureService(enclosureRepo)
+	animalTransportService := service.NewAnimalTransportService(animalRepo, enclosureRepo, eventDispatcher)
+
+	animalHandler := handler.NewAnimalHandler(animalService, animalTransportService)
+	enclosureHandler := handler.NewEnclosureHandler(enclosureService)
+
+	r := router.SetupRouter(animalHandler, enclosureHandler)
 	err := r.Run(":8080")
 	if err != nil {
 		log.Fatal(err)

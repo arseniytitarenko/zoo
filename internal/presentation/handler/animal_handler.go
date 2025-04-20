@@ -10,11 +10,12 @@ import (
 )
 
 type AnimalHandler struct {
-	animalUseCase in.AnimalUseCase
+	animalUseCase          in.AnimalUseCase
+	animalTransportUseCase in.AnimalTransportUseCase
 }
 
-func NewAnimalHandler(animalUseCase in.AnimalUseCase) *AnimalHandler {
-	return &AnimalHandler{animalUseCase: animalUseCase}
+func NewAnimalHandler(animalUseCase in.AnimalUseCase, animalTransportUseCase in.AnimalTransportUseCase) *AnimalHandler {
+	return &AnimalHandler{animalUseCase: animalUseCase, animalTransportUseCase: animalTransportUseCase}
 }
 
 func (h *AnimalHandler) GetAllAnimals(c *gin.Context) {
@@ -51,6 +52,9 @@ func (h *AnimalHandler) NewAnimal(c *gin.Context) {
 		errors.Is(err, errs.ErrInvalidStatus) || errors.Is(err, errs.ErrEnclosureNotFound) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	} else if errors.Is(err, errs.ErrEnclosureIsFull) {
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		return
 	} else if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -68,6 +72,32 @@ func (h *AnimalHandler) DeleteAnimal(c *gin.Context) {
 		return
 	} else if errors.Is(err, errs.ErrAnimalNotFound) {
 		c.JSON(http.StatusNotFound, err.Error())
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{})
+}
+
+func (h *AnimalHandler) TransportAnimal(c *gin.Context) {
+	id := c.Param("id")
+	var req dto.TransportAnimalRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.animalTransportUseCase.TransportAnimal(id, req.ToEnclosureID)
+	if errors.Is(err, errs.ErrEnclosureNotFound) || errors.Is(err, errs.ErrInvalidID) {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	} else if errors.Is(err, errs.ErrAnimalNotFound) {
+		c.JSON(http.StatusNotFound, err.Error())
+		return
+	} else if errors.Is(err, errs.ErrEnclosureIsFull) {
+		c.JSON(http.StatusConflict, err.Error())
 		return
 	} else if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
