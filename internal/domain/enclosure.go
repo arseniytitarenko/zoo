@@ -79,3 +79,4 @@ func NewSize(length, width, height float64) *Size {
 func (s *Size) Length() float64 { return s.length }
 func (s *Size) Width() float64  { return s.width }
 func (s *Size) Height() float64 { return s.height }
+func (s *Size) Volume() float64 { return s.length * s.width * s.height }
