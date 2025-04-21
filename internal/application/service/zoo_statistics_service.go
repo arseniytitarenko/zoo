@@ -124,8 +124,8 @@ func (s *ZooStatisticsService) CalculateFeedingStatistics() *dto.FeedingStatisti
 	for _, feeding := range feedings {
 		if feeding.IsOccurred() {
 			occurredCount++
+			totalDelay += feeding.OccurredAt().Sub(feeding.ScheduledAt())
 		}
-		totalDelay += feeding.OccurredAt().Sub(feeding.ScheduledAt())
 	}
 	switch totalCount {
 	case 0:

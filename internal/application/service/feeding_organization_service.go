@@ -90,11 +90,17 @@ func newFeedingScheduleResponses(schedules []domain.FeedingSchedule) []dto.Feedi
 }
 
 func newFeedingScheduleResponse(schedule *domain.FeedingSchedule) *dto.FeedingScheduleResponse {
+	var occurredAt string
+	if schedule.IsOccurred() {
+		occurredAt = schedule.OccurredAt().Format("02.01.2006 15:04")
+	} else {
+		occurredAt = ""
+	}
 	return &dto.FeedingScheduleResponse{
 		ID:          schedule.ID(),
 		AnimalID:    schedule.AnimalID(),
 		FoodType:    schedule.FoodType(),
 		ScheduledAt: schedule.ScheduledAt().Format("02.01.2006 15:04"),
-		OccurredAt:  schedule.OccurredAt().Format("02.01.2006 15:04"),
+		OccurredAt:  occurredAt,
 	}
 }
