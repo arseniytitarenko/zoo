@@ -2,6 +2,8 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	"zoo/internal/presentation/handler"
 )
 
@@ -45,5 +47,7 @@ func SetupRouter(
 		statisticsGroup.GET("/enclosures", zooStatisticsHandler.GetEnclosureStatistics)
 		statisticsGroup.GET("/schedules", zooStatisticsHandler.GetFeedingStatistics)
 	}
+
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return r
 }

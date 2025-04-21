@@ -1,0 +1,557 @@
+definitions:
+  domain.EnclosureType:
+    enum:
+    - Aquarium
+    - For predators
+    - For herbivores
+    - For birds
+    - Other
+    type: string
+    x-enum-varnames:
+    - Aquarium
+    - ForPredators
+    - ForHerbivores
+    - ForBirds
+    - Other
+  domain.Gender:
+    enum:
+    - Male
+    - Female
+    type: string
+    x-enum-varnames:
+    - Male
+    - Female
+  domain.HealthStatus:
+    enum:
+    - Healthy
+    - Sick
+    type: string
+    x-enum-varnames:
+    - Healthy
+    - Sick
+  dto.AnimalResponse:
+    properties:
+      birth_date:
+        type: string
+      enclosure_id:
+        type: string
+      favorite_food:
+        type: string
+      gender:
+        $ref: '#/definitions/domain.Gender'
+      health_status:
+        $ref: '#/definitions/domain.HealthStatus'
+      id:
+        type: string
+      name:
+        type: string
+      species:
+        type: string
+    type: object
+  dto.AnimalStatisticsResponse:
+    properties:
+      gender_stats:
+        $ref: '#/definitions/dto.GenderStatistics'
+      health_stats:
+        $ref: '#/definitions/dto.HealthStatistics'
+      species_stats:
+        items:
+          $ref: '#/definitions/dto.SpeciesStatistics'
+        type: array
+      total_count:
+        type: integer
+    type: object
+  dto.EnclosureResponse:
+    properties:
+      animal_capacity:
+        type: integer
+      curr_animal_count:
+        type: integer
+      height:
+        type: number
+      id:
+        type: string
+      length:
+        type: number
+      type:
+        $ref: '#/definitions/domain.EnclosureType'
+      width:
+        type: number
+    type: object
+  dto.EnclosureStatisticsResponse:
+    properties:
+      average_animal_count_per_enclosure:
+        type: number
+      average_volume_per_animal:
+        type: number
+      total_animal_count_in_enclosures:
+        type: integer
+      total_capacity:
+        type: integer
+      total_count:
+        type: integer
+      total_volume:
+        type: number
+      type_stats:
+        $ref: '#/definitions/dto.EnclosureTypeStatistics'
+    type: object
+  dto.EnclosureTypeStatistics:
+    properties:
+      aquarium_count:
+        type: integer
+      for_birds_count:
+        type: integer
+      for_herbivores_count:
+        type: integer
+      for_predators_count:
+        type: integer
+      other_count:
+        type: integer
+    type: object
+  dto.FeedingScheduleResponse:
+    properties:
+      animal_id:
+        type: string
+      food_type:
+        type: string
+      id:
+        type: string
+      occurred_at:
+        type: string
+      scheduled_at:
+        type: string
+    type: object
+  dto.FeedingStatisticsResponse:
+    properties:
+      average_delay:
+        type: string
+      occurred_count:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  dto.GenderStatistics:
+    properties:
+      female_count:
+        type: integer
+      male_count:
+        type: integer
+    type: object
+  dto.HealthStatistics:
+    properties:
+      healthy_count:
+        type: integer
+      sick_count:
+        type: integer
+    type: object
+  dto.NewAnimalRequest:
+    properties:
+      birth_date:
+        type: string
+      enclosure_id:
+        type: string
+      favorite_food:
+        type: string
+      gender:
+        $ref: '#/definitions/domain.Gender'
+      health_status:
+        $ref: '#/definitions/domain.HealthStatus'
+      name:
+        type: string
+      species:
+        type: string
+    required:
+    - birth_date
+    - enclosure_id
+    - favorite_food
+    - gender
+    - health_status
+    - name
+    - species
+    type: object
+  dto.NewEnclosureRequest:
+    properties:
+      animal_capacity:
+        type: integer
+      height:
+        type: number
+      length:
+        type: number
+      type:
+        $ref: '#/definitions/domain.EnclosureType'
+      width:
+        type: number
+    type: object
+  dto.NewFeedingScheduleRequest:
+    properties:
+      animal_id:
+        type: string
+      food_type:
+        type: string
+      scheduled_at:
+        type: string
+    type: object
+  dto.SpeciesStatistics:
+    properties:
+      count:
+        type: integer
+      species:
+        type: string
+    type: object
+  dto.TransportAnimalRequest:
+    properties:
+      to_enclosure_id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API для зоопарка
+  title: Zoo API
+  version: "1.0"
+paths:
+  /animals:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AnimalResponse'
+            type: array
+      summary: Get all animals
+      tags:
+      - animals
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: New animal data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewAnimalRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.AnimalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new animal
+      tags:
+      - animals
+  /animals/{id}:
+    delete:
+      parameters:
+      - description: Animal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete animal by ID
+      tags:
+      - animals
+    get:
+      parameters:
+      - description: Animal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AnimalResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get animal by ID
+      tags:
+      - animals
+  /animals/{id}/schedules:
+    get:
+      parameters:
+      - description: Animal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.FeedingScheduleResponse'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get feeding schedules for specific animal
+      tags:
+      - feeding
+  /animals/{id}/transport:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Animal ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Target enclosure ID
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TransportAnimalRequest'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Transport animal to another enclosure
+      tags:
+      - animals
+  /enclosures:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.EnclosureResponse'
+            type: array
+      summary: Get all enclosures
+      tags:
+      - enclosures
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: New enclosure data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewEnclosureRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.EnclosureResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new enclosure
+      tags:
+      - enclosures
+  /enclosures/{id}:
+    delete:
+      parameters:
+      - description: Enclosure ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete enclosure by ID
+      tags:
+      - enclosures
+    get:
+      parameters:
+      - description: Enclosure ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.EnclosureResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get enclosure by ID
+      tags:
+      - enclosures
+  /schedules:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.FeedingScheduleResponse'
+            type: array
+      summary: Get all feeding schedules
+      tags:
+      - feeding
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: New feeding schedule
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewFeedingScheduleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.FeedingScheduleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new feeding schedule
+      tags:
+      - feeding
+  /schedules/{id}/feed:
+    post:
+      parameters:
+      - description: Feeding Schedule ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FeedingScheduleResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Mark feeding schedule as occurred
+      tags:
+      - feeding
+  /statistics/animals:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AnimalStatisticsResponse'
+      summary: Get animal statistics
+      tags:
+      - statistics
+  /statistics/enclosures:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.EnclosureStatisticsResponse'
+      summary: Get enclosure statistics
+      tags:
+      - statistics
+  /statistics/schedules:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FeedingStatisticsResponse'
+      summary: Get feeding statistics
+      tags:
+      - statistics
+swagger: "2.0"

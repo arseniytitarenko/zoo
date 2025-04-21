@@ -90,13 +90,21 @@ func (s *ZooStatisticsService) CalculateEnclosureStatistics() *dto.EnclosureStat
 			otherCount++
 		}
 	}
+	var averageAnimalCountPerEnclosure, averageVolumePerAnimal float64
+	if totalCount == 0 {
+		averageAnimalCountPerEnclosure = 0
+		averageVolumePerAnimal = 0
+	} else {
+		averageAnimalCountPerEnclosure = float64(animalCount) / float64(totalCount)
+		averageVolumePerAnimal = volume / float64(totalCount)
+	}
 	return &dto.EnclosureStatisticsResponse{
 		TotalCount:                     totalCount,
 		TotalVolume:                    volume,
 		TotalCapacity:                  capacity,
 		TotalAnimalCountInEnclosures:   animalCount,
-		AverageAnimalCountPerEnclosure: float64(animalCount) / float64(totalCount),
-		AverageVolumePerAnimal:         volume / float64(totalCount),
+		AverageAnimalCountPerEnclosure: averageAnimalCountPerEnclosure,
+		AverageVolumePerAnimal:         averageVolumePerAnimal,
 		TypeStats: dto.EnclosureTypeStatistics{
 			AquariumCount:      aquariumCount,
 			ForBirdsCount:      forBirdsCount,
@@ -111,17 +119,24 @@ func (s *ZooStatisticsService) CalculateFeedingStatistics() *dto.FeedingStatisti
 	feedings := s.feedingScheduleRepo.GetAll()
 	totalCount := len(feedings)
 	occurredCount := 0
-	var averageDelay time.Duration
+	var totalDelay time.Duration
+	var averageDelay string
 	for _, feeding := range feedings {
 		if feeding.IsOccurred() {
 			occurredCount++
 		}
-		averageDelay += feeding.OccurredAt().Sub(feeding.ScheduledAt())
+		totalDelay += feeding.OccurredAt().Sub(feeding.ScheduledAt())
+	}
+	switch totalCount {
+	case 0:
+		averageDelay = FormatDuration(time.Duration(0))
+	default:
+		averageDelay = FormatDuration(totalDelay / time.Duration(totalCount))
 	}
 	return &dto.FeedingStatisticsResponse{
 		TotalCount:    totalCount,
 		OccurredCount: occurredCount,
-		AverageDelay:  FormatDuration(averageDelay / time.Duration(totalCount)),
+		AverageDelay:  averageDelay,
 	}
 }
 
