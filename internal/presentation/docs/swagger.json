@@ -1,0 +1,849 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API для зоопарка",
+        "title": "Zoo API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "paths": {
+        "/animals": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "animals"
+                ],
+                "summary": "Get all animals",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.AnimalResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "animals"
+                ],
+                "summary": "Create a new animal",
+                "parameters": [
+                    {
+                        "description": "New animal data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NewAnimalRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AnimalResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/animals/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "animals"
+                ],
+                "summary": "Get animal by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Animal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AnimalResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "animals"
+                ],
+                "summary": "Delete animal by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Animal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/animals/{id}/schedules": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feeding"
+                ],
+                "summary": "Get feeding schedules for specific animal",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Animal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.FeedingScheduleResponse"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/animals/{id}/transport": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "animals"
+                ],
+                "summary": "Transport animal to another enclosure",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Animal ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Target enclosure ID",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransportAnimalRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/enclosures": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enclosures"
+                ],
+                "summary": "Get all enclosures",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.EnclosureResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enclosures"
+                ],
+                "summary": "Create a new enclosure",
+                "parameters": [
+                    {
+                        "description": "New enclosure data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NewEnclosureRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EnclosureResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/enclosures/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enclosures"
+                ],
+                "summary": "Get enclosure by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Enclosure ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EnclosureResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "enclosures"
+                ],
+                "summary": "Delete enclosure by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Enclosure ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schedules": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feeding"
+                ],
+                "summary": "Get all feeding schedules",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.FeedingScheduleResponse"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feeding"
+                ],
+                "summary": "Create a new feeding schedule",
+                "parameters": [
+                    {
+                        "description": "New feeding schedule",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NewFeedingScheduleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FeedingScheduleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/schedules/{id}/feed": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "feeding"
+                ],
+                "summary": "Mark feeding schedule as occurred",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Feeding Schedule ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FeedingScheduleResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/animals": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Get animal statistics",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AnimalStatisticsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/enclosures": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Get enclosure statistics",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.EnclosureStatisticsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/schedules": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Get feeding statistics",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FeedingStatisticsResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.EnclosureType": {
+            "type": "string",
+            "enum": [
+                "Aquarium",
+                "For predators",
+                "For herbivores",
+                "For birds",
+                "Other"
+            ],
+            "x-enum-varnames": [
+                "Aquarium",
+                "ForPredators",
+                "ForHerbivores",
+                "ForBirds",
+                "Other"
+            ]
+        },
+        "domain.Gender": {
+            "type": "string",
+            "enum": [
+                "Male",
+                "Female"
+            ],
+            "x-enum-varnames": [
+                "Male",
+                "Female"
+            ]
+        },
+        "domain.HealthStatus": {
+            "type": "string",
+            "enum": [
+                "Healthy",
+                "Sick"
+            ],
+            "x-enum-varnames": [
+                "Healthy",
+                "Sick"
+            ]
+        },
+        "dto.AnimalResponse": {
+            "type": "object",
+            "properties": {
+                "birth_date": {
+                    "type": "string"
+                },
+                "enclosure_id": {
+                    "type": "string"
+                },
+                "favorite_food": {
+                    "type": "string"
+                },
+                "gender": {
+                    "$ref": "#/definitions/domain.Gender"
+                },
+                "health_status": {
+                    "$ref": "#/definitions/domain.HealthStatus"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "species": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.AnimalStatisticsResponse": {
+            "type": "object",
+            "properties": {
+                "gender_stats": {
+                    "$ref": "#/definitions/dto.GenderStatistics"
+                },
+                "health_stats": {
+                    "$ref": "#/definitions/dto.HealthStatistics"
+                },
+                "species_stats": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.SpeciesStatistics"
+                    }
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.EnclosureResponse": {
+            "type": "object",
+            "properties": {
+                "animal_capacity": {
+                    "type": "integer"
+                },
+                "curr_animal_count": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "length": {
+                    "type": "number"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.EnclosureType"
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.EnclosureStatisticsResponse": {
+            "type": "object",
+            "properties": {
+                "average_animal_count_per_enclosure": {
+                    "type": "number"
+                },
+                "average_volume_per_animal": {
+                    "type": "number"
+                },
+                "total_animal_count_in_enclosures": {
+                    "type": "integer"
+                },
+                "total_capacity": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                },
+                "total_volume": {
+                    "type": "number"
+                },
+                "type_stats": {
+                    "$ref": "#/definitions/dto.EnclosureTypeStatistics"
+                }
+            }
+        },
+        "dto.EnclosureTypeStatistics": {
+            "type": "object",
+            "properties": {
+                "aquarium_count": {
+                    "type": "integer"
+                },
+                "for_birds_count": {
+                    "type": "integer"
+                },
+                "for_herbivores_count": {
+                    "type": "integer"
+                },
+                "for_predators_count": {
+                    "type": "integer"
+                },
+                "other_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.FeedingScheduleResponse": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "food_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "occurred_at": {
+                    "type": "string"
+                },
+                "scheduled_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.FeedingStatisticsResponse": {
+            "type": "object",
+            "properties": {
+                "average_delay": {
+                    "type": "string"
+                },
+                "occurred_count": {
+                    "type": "integer"
+                },
+                "total_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.GenderStatistics": {
+            "type": "object",
+            "properties": {
+                "female_count": {
+                    "type": "integer"
+                },
+                "male_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HealthStatistics": {
+            "type": "object",
+            "properties": {
+                "healthy_count": {
+                    "type": "integer"
+                },
+                "sick_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.NewAnimalRequest": {
+            "type": "object",
+            "required": [
+                "birth_date",
+                "enclosure_id",
+                "favorite_food",
+                "gender",
+                "health_status",
+                "name",
+                "species"
+            ],
+            "properties": {
+                "birth_date": {
+                    "type": "string"
+                },
+                "enclosure_id": {
+                    "type": "string"
+                },
+                "favorite_food": {
+                    "type": "string"
+                },
+                "gender": {
+                    "$ref": "#/definitions/domain.Gender"
+                },
+                "health_status": {
+                    "$ref": "#/definitions/domain.HealthStatus"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "species": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NewEnclosureRequest": {
+            "type": "object",
+            "properties": {
+                "animal_capacity": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "length": {
+                    "type": "number"
+                },
+                "type": {
+                    "$ref": "#/definitions/domain.EnclosureType"
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.NewFeedingScheduleRequest": {
+            "type": "object",
+            "properties": {
+                "animal_id": {
+                    "type": "string"
+                },
+                "food_type": {
+                    "type": "string"
+                },
+                "scheduled_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SpeciesStatistics": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "species": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TransportAnimalRequest": {
+            "type": "object",
+            "properties": {
+                "to_enclosure_id": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

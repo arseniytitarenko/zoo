@@ -23,7 +23,7 @@ func main() {
 	eventDispatcher := dispatcher.NewEventDispatcher()
 	dispatcher.RegisterEventHandlers(eventDispatcher)
 
-	animalService := service.NewAnimalService(animalRepo)
+	animalService := service.NewAnimalService(animalRepo, enclosureRepo)
 	enclosureService := service.NewEnclosureService(enclosureRepo)
 	animalTransportService := service.NewAnimalTransportService(animalRepo, enclosureRepo, eventDispatcher)
 	feedingService := service.NewFeedingOrganizationService(animalRepo, feedingRepo, eventDispatcher)

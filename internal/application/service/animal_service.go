@@ -14,8 +14,8 @@ type AnimalService struct {
 	enclosureRepo out.EnclosureRepository
 }
 
-func NewAnimalService(animalRepo out.AnimalRepository) *AnimalService {
-	return &AnimalService{animalRepo: animalRepo}
+func NewAnimalService(animalRepo out.AnimalRepository, enclosureRepo out.EnclosureRepository) *AnimalService {
+	return &AnimalService{animalRepo: animalRepo, enclosureRepo: enclosureRepo}
 }
 
 func (s *AnimalService) GetAllAnimals() []dto.AnimalResponse {

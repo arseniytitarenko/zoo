@@ -20,7 +20,7 @@ func NewInMemoryAnimalRepo() *InMemoryAnimalRepo {
 func (r *InMemoryAnimalRepo) Save(animal *domain.Animal) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.data[animal.Id] = animal
+	r.data[animal.ID()] = animal
 }
 
 func (r *InMemoryAnimalRepo) Delete(id uuid.UUID) {

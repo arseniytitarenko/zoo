@@ -54,9 +54,9 @@ type EnclosureType string
 
 const (
 	Aquarium      EnclosureType = "Aquarium"
-	ForPredators  EnclosureType = "For predators"
-	ForHerbivores EnclosureType = "For herbivores"
-	ForBirds      EnclosureType = "For birds"
+	ForPredators  EnclosureType = "ForPredators"
+	ForHerbivores EnclosureType = "ForHerbivores"
+	ForBirds      EnclosureType = "ForBirds"
 	Other         EnclosureType = "Other"
 )
 

@@ -20,7 +20,7 @@ func NewInMemoryEnclosureRepo() *InMemoryEnclosureRepo {
 func (r *InMemoryEnclosureRepo) Save(enclosure *domain.Enclosure) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.data[enclosure.ID] = enclosure
+	r.data[enclosure.ID()] = enclosure
 }
 
 func (r *InMemoryEnclosureRepo) Delete(id uuid.UUID) {
