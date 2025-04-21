@@ -34,6 +34,13 @@
 - `infrastructure/dispatcher` — реализация диспетчера событий
 - `presentation/handler` — gin-хэндлеры
 - `presentation/router` — маршруты
+#### Связь слоёв
+- Зависимости между слоями реализованы через интерфейсы
+- Бизнес-логика полностью изолирована в domain и application/service слоях
+##### Пример: 
+1. `domain.Animal`
+2. `AnimalService` (реализует `AnimalUseCase`)
+3. `InMemoryAnimalRepo` (реализует `AnimalRepository`)
 
 ### Агрегаты с бизнес-логикой:
 - `Animal` - (`MoveTo`, `Feed`, `Treat`) 
@@ -55,6 +62,6 @@
 
 ## Запуск
 ```bash
-go run ./zoo/cmd/main.go
+go run cmd/main.go
 ```
 Swagger со всеми ручками и их описанием доступен по адресу: http://localhost:8080/swagger/index.html
