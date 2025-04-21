@@ -60,8 +60,6 @@ const (
 	Other         EnclosureType = "Other"
 )
 
-// --- Size ---
-
 type Size struct {
 	length float64
 	width  float64
